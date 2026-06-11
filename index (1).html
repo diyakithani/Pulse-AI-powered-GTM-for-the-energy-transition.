@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pulse v2 — Climate GTM Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#090d0b;
+  --surface:#0f1410;
+  --surface2:#141a16;
+  --surface3:#1a211c;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.13);
+  --text:#e4ebe6;
+  --text2:#7d9183;
+  --text3:#425248;
+  --green:#22c785;
+  --green-dim:rgba(34,199,133,0.1);
+  --green-mid:rgba(34,199,133,0.2);
+  --amber:#f5a623;
+  --amber-dim:rgba(245,166,35,0.1);
+  --blue:#4f9cf9;
+  --blue-dim:rgba(79,156,249,0.1);
+  --red:#f05252;
+  --red-dim:rgba(240,82,82,0.09);
+  --teal:#2dd4bf;
+  --teal-dim:rgba(45,212,191,0.1);
+  --r:10px;--rl:16px;
+}
+html{font-size:14px}
+body{font-family:'Geist',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:224px;min-width:224px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:fixed;left:0;top:0;z-index:10}
+.logo{padding:20px 18px 14px;border-bottom:1px solid var(--border)}
+.logo-mark{font-family:'Instrument Serif',serif;font-size:22px;color:var(--green);letter-spacing:-0.02em;display:flex;align-items:center;gap:8px}
+.logo-leaf{font-size:18px}
+.logo-sub{font-family:'Geist Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-top:3px}
+
+/* MISSION TICKER */
+.ticker-wrap{background:var(--green-dim);border-bottom:1px solid rgba(34,199,133,0.15);padding:7px 12px;overflow:hidden}
+.ticker-label{font-family:'Geist Mono',monospace;font-size:8px;color:var(--green);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;opacity:0.7}
+.ticker-text{font-size:10px;color:var(--text2);line-height:1.4;animation:tickerFade 8s infinite}
+@keyframes tickerFade{0%,100%{opacity:0.6}50%{opacity:1}}
+
+.nav{padding:10px 8px;flex:1;display:flex;flex-direction:column;gap:1px;overflow-y:auto}
+.nav-section{font-family:'Geist Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;padding:8px 10px 4px;margin-top:6px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:12px;transition:all 0.15s;border:1px solid transparent}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--green-dim);color:var(--green);border-color:rgba(34,199,133,0.18)}
+.nav-icon{font-size:14px;width:16px;text-align:center}
+.nav-badge{margin-left:auto;font-family:'Geist Mono',monospace;font-size:9px;background:var(--green-dim);color:var(--green);border:1px solid rgba(34,199,133,0.25);border-radius:99px;padding:1px 6px}
+
+/* IMPACT COUNTER */
+.impact-box{margin:10px 10px 0;background:var(--surface2);border:1px solid rgba(34,199,133,0.15);border-radius:var(--r);padding:10px 12px}
+.impact-label{font-family:'Geist Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px}
+.impact-value{font-family:'Instrument Serif',serif;font-size:20px;color:var(--green);letter-spacing:-0.02em;line-height:1}
+.impact-sub{font-size:9px;color:var(--text3);margin-top:2px;font-family:'Geist Mono',monospace}
+
+.sidebar-footer{padding:12px 14px;border-top:1px solid var(--border)}
+.user-row{display:flex;align-items:center;gap:9px}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--green-dim);border:1px solid rgba(34,199,133,0.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--green);flex-shrink:0}
+.user-name{font-size:12px;font-weight:500}
+.user-role{font-size:9px;color:var(--text3);font-family:'Geist Mono',monospace}
+
+/* MAIN */
+.main{margin-left:224px;flex:1;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
+.topbar{height:52px;min-height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:14px;position:sticky;top:0;z-index:5}
+.topbar-title{font-size:13px;font-weight:500}
+.topbar-spacer{flex:1}
+.status-pill{font-family:'Geist Mono',monospace;font-size:10px;padding:4px 10px;border-radius:99px;display:flex;align-items:center;gap:6px;background:var(--green-dim);color:var(--green);border:1px solid rgba(34,199,133,0.2)}
+.pulse-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+
+.content{padding:24px;flex:1}
+.panel{display:none;animation:panelIn 0.2s ease}
+.panel.active{display:block}
+@keyframes panelIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:16px 18px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title{font-size:13px;font-weight:500}
+.card-action{font-family:'Geist Mono',monospace;font-size:10px;color:var(--green);cursor:pointer;background:none;border:none;padding:0}
+.card-action:hover{opacity:0.7}
+
+/* GRIDS */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+
+/* METRIC CARDS */
+.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:16px 18px}
+.metric-label{font-family:'Geist Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px}
+.metric-value{font-family:'Instrument Serif',serif;font-size:30px;color:var(--text);letter-spacing:-0.02em;line-height:1}
+.metric-value.green{color:var(--green)}
+.metric-delta{font-size:10px;font-family:'Geist Mono',monospace;margin-top:5px}
+.up{color:var(--green)}.dn{color:var(--red)}.amb{color:var(--amber)}
+
+/* BADGES / CHIPS */
+.badge{display:inline-flex;align-items:center;gap:4px;font-family:'Geist Mono',monospace;font-size:9px;padding:2px 8px;border-radius:99px;font-weight:500;margin:2px;letter-spacing:0.04em}
+.b-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(34,199,133,0.2)}
+.b-amber{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,166,35,0.2)}
+.b-blue{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(79,156,249,0.2)}
+.b-teal{background:var(--teal-dim);color:var(--teal);border:1px solid rgba(45,212,191,0.2)}
+.b-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(240,82,82,0.2)}
+.b-gray{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+
+/* BUTTONS */
+.btn{font-family:'Geist Mono',monospace;font-size:10px;padding:7px 14px;border-radius:var(--r);border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--green);color:#000;border-color:var(--green);font-weight:500}
+.btn.primary:hover{background:#1aaf75}
+.btn:disabled{opacity:0.35;cursor:not-allowed}
+
+/* SIGNALS */
+.signal-item{display:flex;align-items:flex-start;gap:10px;padding:9px 11px;border-radius:var(--r);background:var(--surface2);border:1px solid var(--border);transition:border-color 0.15s;cursor:pointer}
+.signal-item:hover{border-color:var(--border2)}
+.sig-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.sig-body{flex:1}
+.sig-tag{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:2px}
+.sig-text{font-size:11px;color:var(--text2);line-height:1.4}
+.sig-co{font-weight:500;color:var(--text)}
+.sig-time{font-family:'Geist Mono',monospace;font-size:9px;color:var(--text3);flex-shrink:0}
+.signal-list{display:flex;flex-direction:column;gap:7px}
+
+/* PROSPECT ROWS */
+.prospect-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:14px 16px;display:grid;grid-template-columns:34px 1fr auto auto auto auto;gap:12px;align-items:center;transition:border-color 0.15s;cursor:pointer}
+.prospect-row:hover{border-color:var(--border2)}
+.p-logo{width:34px;height:34px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:13px;color:var(--text2);border:1px solid var(--border);flex-shrink:0}
+.p-name{font-size:13px;font-weight:500}
+.p-meta{font-size:10px;color:var(--text3);font-family:'Geist Mono',monospace;margin-top:1px}
+.score-badge{font-family:'Geist Mono',monospace;font-size:10px;font-weight:500;padding:3px 9px;border-radius:99px}
+.s-hot{background:var(--green-dim);color:var(--green);border:1px solid rgba(34,199,133,0.2)}
+.s-warm{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,166,35,0.2)}
+.s-cool{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(79,156,249,0.2)}
+.stage-tag{font-family:'Geist Mono',monospace;font-size:9px;color:var(--text3);border:1px solid var(--border);border-radius:99px;padding:2px 8px}
+
+/* PIPELINE BARS */
+.stage-row{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.stage-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--text2)}
+.bar-bg{height:4px;background:var(--surface3);border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;background:var(--green);transition:width 1s cubic-bezier(0.4,0,0.2,1)}
+
+/* OUTREACH PANEL */
+.outreach-layout{display:grid;grid-template-columns:280px 1fr;gap:14px;height:calc(100vh - 150px)}
+.plist-sidebar{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow-y:auto;display:flex;flex-direction:column}
+.plist-header{padding:12px 14px;border-bottom:1px solid var(--border);font-size:10px;font-weight:500;color:var(--text2);font-family:'Geist Mono',monospace;letter-spacing:0.05em}
+.plist-item{padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.12s}
+.plist-item:hover{background:var(--surface2)}
+.plist-item.selected{background:var(--green-dim);border-left:2px solid var(--green)}
+.plist-name{font-size:12px;font-weight:500;margin-bottom:2px}
+.plist-meta{font-size:9px;color:var(--text3);font-family:'Geist Mono',monospace}
+.plist-scores{display:flex;gap:4px;margin-top:4px}
+
+.compose-area{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);display:flex;flex-direction:column;overflow:hidden}
+.compose-header{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.compose-title{font-size:13px;font-weight:500}
+.why-context{padding:10px 18px;background:var(--green-dim);border-bottom:1px solid rgba(34,199,133,0.15)}
+.why-label{font-family:'Geist Mono',monospace;font-size:8px;color:var(--green);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;opacity:0.8}
+.why-text{font-size:11px;color:var(--text2);line-height:1.5}
+.compose-ctx{padding:10px 18px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;gap:18px;flex-wrap:wrap}
+.ctx-item{display:flex;flex-direction:column;gap:1px}
+.ctx-label{font-family:'Geist Mono',monospace;font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em}
+.ctx-value{font-size:11px;color:var(--text)}
+.tone-row{display:flex;gap:5px;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--border);align-items:center}
+.tone-label{font-family:'Geist Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-right:4px}
+.tone-btn{font-family:'Geist Mono',monospace;font-size:9px;padding:4px 9px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--text2);cursor:pointer;transition:all 0.12s}
+.tone-btn:hover{border-color:var(--border2);color:var(--text)}
+.tone-btn.active{background:var(--green-dim);color:var(--green);border-color:rgba(34,199,133,0.3)}
+.email-output{flex:1;padding:18px;overflow-y:auto;font-size:12px;line-height:1.75;color:var(--text2);white-space:pre-wrap;font-family:'Geist',sans-serif}
+.empty-email{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px;color:var(--text3)}
+.empty-icon{font-size:28px;opacity:0.25}
+.empty-txt{font-size:11px;font-family:'Geist Mono',monospace}
+.compose-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center}
+.char-count{font-family:'Geist Mono',monospace;font-size:9px;color:var(--text3);margin-left:auto}
+
+/* SIGNALS PANEL */
+.feed-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.feed-item:last-child{border-bottom:none}
+.feed-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.fi-green{background:var(--green-dim)}
+.fi-blue{background:var(--blue-dim)}
+.fi-amber{background:var(--amber-dim)}
+.fi-teal{background:var(--teal-dim)}
+.fi-gray{background:var(--surface3)}
+.fi-title{font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px}
+.fi-body{font-size:11px;color:var(--text2);line-height:1.5}
+.fi-meta{font-family:'Geist Mono',monospace;font-size:9px;color:var(--text3);margin-top:3px}
+.fi-green-text{color:var(--green)}
+.fi-amber-text{color:var(--amber)}
+
+/* PROSPECT DETAIL DRAWER */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:100;display:none;align-items:flex-start;justify-content:flex-end}
+.drawer-overlay.open{display:flex}
+.drawer{width:500px;height:100vh;background:var(--surface);border-left:1px solid var(--border2);overflow-y:auto;padding:26px;animation:dIn 0.2s ease}
+@keyframes dIn{from{transform:translateX(30px);opacity:0}to{transform:translateX(0);opacity:1}}
+.drawer-close{background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;float:right;margin-top:-2px}
+.drawer-close:hover{color:var(--text)}
+.d-name{font-family:'Instrument Serif',serif;font-size:24px;margin-bottom:2px;margin-top:4px}
+.d-sector{font-family:'Geist Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px}
+.d-section{margin-bottom:18px}
+.d-section-title{font-family:'Geist Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:7px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.d-body{font-size:12px;color:var(--text2);line-height:1.6}
+
+/* SCORE TRIO */
+.score-trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.score-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;text-align:center}
+.score-num{font-family:'Instrument Serif',serif;font-size:26px;line-height:1}
+.score-lbl{font-family:'Geist Mono',monospace;font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-top:3px}
+
+/* MANDATE CLOCK */
+.mandate-clock{background:var(--amber-dim);border:1px solid rgba(245,166,35,0.2);border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.mandate-years{font-family:'Instrument Serif',serif;font-size:28px;color:var(--amber);line-height:1}
+.mandate-label{font-size:11px;color:var(--text2);line-height:1.4}
+.mandate-sub{font-family:'Geist Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px}
+
+/* IMPACT ESTIMATE */
+.impact-estimate{background:var(--green-dim);border:1px solid rgba(34,199,133,0.15);border-radius:var(--r);padding:10px 14px;margin-bottom:10px}
+.impact-est-val{font-family:'Instrument Serif',serif;font-size:22px;color:var(--green);line-height:1;margin-bottom:2px}
+.impact-est-lbl{font-size:10px;color:var(--text2)}
+
+/* WHY MATTERS */
+.why-matters{background:var(--surface2);border-left:2px solid var(--green);border-radius:0 var(--r) var(--r) 0;padding:10px 14px;margin-bottom:10px}
+.wm-label{font-family:'Geist Mono',monospace;font-size:8px;color:var(--green);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;opacity:0.8}
+.wm-text{font-size:11px;color:var(--text2);line-height:1.5}
+
+/* SUSTAINABILITY ANALYZER */
+.analyzer-area{display:grid;grid-template-columns:1fr 1fr;gap:14px;height:calc(100vh-150px)}
+.textarea-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);display:flex;flex-direction:column;overflow:hidden}
+.ta-header{padding:12px 16px;border-bottom:1px solid var(--border);font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:space-between}
+textarea.report-input{flex:1;background:var(--surface2);border:none;outline:none;padding:14px 16px;font-family:'Geist Mono',monospace;font-size:11px;color:var(--text2);resize:none;line-height:1.6}
+textarea.report-input::placeholder{color:var(--text3)}
+.ta-footer{padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center}
+.analysis-output{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;display:flex;flex-direction:column}
+.ao-header{padding:12px 16px;border-bottom:1px solid var(--border);font-size:12px;font-weight:500}
+.ao-body{flex:1;overflow-y:auto;padding:14px 16px}
+.insight-block{margin-bottom:14px}
+.ib-label{font-family:'Geist Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px}
+.ib-content{font-size:11px;color:var(--text2);line-height:1.6;white-space:pre-wrap}
+
+/* API KEY BANNER */
+.api-banner{background:var(--amber-dim);border-bottom:1px solid rgba(245,166,35,0.25);padding:8px 22px;display:flex;align-items:center;gap:10px;font-size:11px;color:var(--amber)}
+.api-banner input{background:var(--surface2);border:1px solid rgba(245,166,35,0.3);border-radius:6px;padding:5px 10px;font-family:'Geist Mono',monospace;font-size:11px;color:var(--text);outline:none;width:320px}
+.api-banner input::placeholder{color:var(--text3)}
+.api-banner input:focus{border-color:var(--amber)}
+.api-save{font-family:'Geist Mono',monospace;font-size:10px;padding:5px 12px;border-radius:6px;border:1px solid rgba(245,166,35,0.3);background:none;color:var(--amber);cursor:pointer}
+.api-save:hover{background:var(--amber-dim)}
+.api-ok{background:var(--green-dim);border-bottom:1px solid rgba(34,199,133,0.15);padding:6px 22px;display:flex;align-items:center;gap:8px;font-size:10px;color:var(--green);font-family:'Geist Mono',monospace}
+/* SPINNER */
+.spinner{width:12px;height:12px;border:2px solid var(--border2);border-top-color:var(--green);border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* TYPING */
+.typing::after{content:'▋';animation:blink 0.8s infinite;color:var(--green)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:22px}
+.page-title{font-family:'Instrument Serif',serif;font-size:26px;letter-spacing:-0.02em;margin-bottom:3px}
+.page-sub{font-size:11px;color:var(--text3);font-family:'Geist Mono',monospace}
+
+/* TOOLBAR */
+.toolbar{display:flex;gap:8px;margin-bottom:18px;align-items:center;flex-wrap:wrap}
+.search-box{flex:1;min-width:160px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-family:'Geist',sans-serif;font-size:12px;color:var(--text);outline:none;transition:border-color 0.15s}
+.search-box::placeholder{color:var(--text3)}
+.search-box:focus{border-color:var(--green)}
+.filter-chip{font-family:'Geist Mono',monospace;font-size:9px;padding:6px 11px;border-radius:99px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.filter-chip:hover,.filter-chip.on{background:var(--green-dim);color:var(--green);border-color:rgba(34,199,133,0.3)}
+
+/* PROSPECT GRID */
+.prospect-grid{display:flex;flex-direction:column;gap:8px}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:99px}
+
+/* SECTOR MAP */
+.sector-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.sector-cell{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:12px;cursor:pointer;transition:all 0.15s}
+.sector-cell:hover{border-color:var(--green)}
+.sc-name{font-size:12px;font-weight:500;margin-bottom:4px}
+.sc-count{font-family:'Geist Mono',monospace;font-size:10px;color:var(--text3)}
+.sc-bar{height:3px;border-radius:99px;margin-top:8px;background:var(--green);opacity:0.5}
+
+/* CAMPAIGN TRACKER */
+.campaign-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px}
+.campaign-row:last-child{border-bottom:none}
+.campaign-name{flex:1;font-weight:500}
+.campaign-stat{font-family:'Geist Mono',monospace;font-size:10px;color:var(--text2);min-width:50px;text-align:right}
+.campaign-bar-wrap{width:80px}
+.campaign-bar-bg{height:3px;background:var(--surface3);border-radius:99px;overflow:hidden}
+.campaign-bar-fill{height:100%;border-radius:99px;background:var(--green)}
+
+/* FUNNEL */
+.funnel-wrap{display:flex;flex-direction:column;gap:6px}
+.funnel-stage{display:flex;align-items:center;gap:10px}
+.funnel-label{font-size:11px;color:var(--text2);width:110px;flex-shrink:0}
+.funnel-bar-bg{flex:1;height:22px;background:var(--surface3);border-radius:4px;overflow:hidden;position:relative}
+.funnel-bar-fill{height:100%;border-radius:4px;background:var(--green);display:flex;align-items:center;padding-left:8px;transition:width 1.2s cubic-bezier(0.4,0,0.2,1)}
+.funnel-val{font-family:'Geist Mono',monospace;font-size:10px;color:#000;font-weight:500;white-space:nowrap}
+.funnel-pct{font-family:'Geist Mono',monospace;font-size:10px;color:var(--text3);width:36px;text-align:right;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark"><span class="logo-leaf">🌿</span> Pulse</div>
+    <div class="logo-sub">Climate GTM Intelligence</div>
+  </div>
+
+  <div class="ticker-wrap">
+    <div class="ticker-label">Mission feed</div>
+    <div class="ticker-text" id="ticker-text">Loading climate signal...</div>
+  </div>
+
+  <div class="impact-box">
+    <div class="impact-label">Pipeline CO₂e impact</div>
+    <div class="impact-value">2.4M <span style="font-size:13px;color:var(--text3)">tonnes</span></div>
+    <div class="impact-sub">avoided if pipeline converts</div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-section">command</div>
+    <div class="nav-item active" onclick="nav('dashboard',this)"><span class="nav-icon">◈</span>Dashboard</div>
+    <div class="nav-item" onclick="nav('prospects',this)"><span class="nav-icon">◎</span>Prospects<span class="nav-badge">12</span></div>
+    <div class="nav-item" onclick="nav('outreach',this)"><span class="nav-icon">◇</span>Outreach AI</div>
+    <div class="nav-section">intelligence</div>
+    <div class="nav-item" onclick="nav('signals',this)"><span class="nav-icon">◉</span>Climate Signals<span class="nav-badge">7</span></div>
+    <div class="nav-item" onclick="nav('analyzer',this)"><span class="nav-icon">◑</span>Report Analyzer</div>
+    <div class="nav-section">analytics</div>
+    <div class="nav-item" onclick="nav('funnel',this)"><span class="nav-icon">△</span>Funnel</div>
+    <div class="nav-item" onclick="nav('campaigns',this)"><span class="nav-icon">▷</span>Campaigns</div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="avatar">DK</div>
+      <div>
+        <div class="user-name">Diya Kithani</div>
+        <div class="user-role">GTM AI Stack @ AZX</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <span class="topbar-title" id="topbar-title">Dashboard</span>
+    <div class="topbar-spacer"></div>
+    <div class="status-pill"><div class="pulse-dot"></div>Climate AI live</div>
+  </div>
+
+  <div id="api-banner" class="api-banner" style="display:none">
+    <span>⚠ External deploy detected — enter your Anthropic API key to enable AI features:</span>
+    <input type="password" id="api-key-input" placeholder="sk-ant-api03-..." autocomplete="off">
+    <button class="api-save" onclick="saveKey()">Save key</button>
+    <a href="https://console.anthropic.com/keys" target="_blank" style="color:var(--amber);font-size:10px;font-family:'Geist Mono',monospace;margin-left:4px">Get key →</a>
+  </div>
+  <div id="api-ok" class="api-ok" style="display:none">
+    <div class="pulse-dot"></div> API key loaded — AI features active
+    <button onclick="clearKey()" style="margin-left:auto;background:none;border:none;color:var(--text3);font-size:10px;font-family:'Geist Mono',monospace;cursor:pointer">Clear key</button>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div id="panel-dashboard" class="panel active">
+      <div class="page-header">
+        <div class="page-title">Good morning, Diya.</div>
+        <div class="page-sub">Thursday, Jun 4 · 7 climate signals overnight · 2 mandate deadlines approaching</div>
+      </div>
+      <div class="g4">
+        <div class="metric-card">
+          <div class="metric-label">hot prospects</div>
+          <div class="metric-value green">12</div>
+          <div class="metric-delta up">↑ 3 this week</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">pipeline CO₂e avoided</div>
+          <div class="metric-value green">2.4M</div>
+          <div class="metric-delta" style="color:var(--teal)">tonnes · if all closes</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">avg mission score</div>
+          <div class="metric-value">87</div>
+          <div class="metric-delta up">↑ 4pts vs last month</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">mandate deadlines</div>
+          <div class="metric-value" style="color:var(--amber)">2</div>
+          <div class="metric-delta amb">within 18 months</div>
+        </div>
+      </div>
+
+      <div class="g2">
+        <div class="card">
+          <div class="card-header"><span class="card-title">🌡️ Climate signals</span><button class="card-action" onclick="nav('signals',null)">view all →</button></div>
+          <div class="signal-list">
+            <div class="signal-item">
+              <div class="sig-dot" style="background:var(--green)"></div>
+              <div class="sig-body"><div class="sig-tag">mandate</div><div class="sig-text"><span class="sig-co">Puget Sound Energy</span> — WA state 100% clean by 2030. 6 years left. Budget unlocked.</div></div>
+              <div class="sig-time">2h</div>
+            </div>
+            <div class="signal-item">
+              <div class="sig-dot" style="background:var(--amber)"></div>
+              <div class="sig-body"><div class="sig-tag">IRA funding</div><div class="sig-text"><span class="sig-co">DOE</span> — $4.2B grid modernization grants announced. Utilities eligible.</div></div>
+              <div class="sig-time">4h</div>
+            </div>
+            <div class="signal-item">
+              <div class="sig-dot" style="background:var(--blue)"></div>
+              <div class="sig-body"><div class="sig-tag">emissions miss</div><div class="sig-text"><span class="sig-co">Flexe</span> — Q1 Scope 2 report shows 14% above target. Likely under board pressure.</div></div>
+              <div class="sig-time">1d</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">Pipeline by stage</span></div>
+          <div id="pipe-bars">
+            <div class="stage-row"><div class="stage-meta"><span>Discovery</span><span style="color:var(--green)">5 accounts</span></div><div class="bar-bg"><div class="bar-fill" data-w="78" style="width:0"></div></div></div>
+            <div class="stage-row"><div class="stage-meta"><span>Qualified</span><span style="color:var(--green)">4 accounts</span></div><div class="bar-bg"><div class="bar-fill" data-w="60" style="width:0"></div></div></div>
+            <div class="stage-row"><div class="stage-meta"><span>Proposal sent</span><span style="color:var(--green)">2 accounts</span></div><div class="bar-bg"><div class="bar-fill" data-w="35" style="width:0"></div></div></div>
+            <div class="stage-row"><div class="stage-meta"><span>Negotiating</span><span style="color:var(--amber)">1 account</span></div><div class="bar-bg"><div class="bar-fill" data-w="18" style="background:var(--amber);width:0"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Top accounts to action</span><button class="card-action" onclick="nav('prospects',null)">see all →</button></div>
+        <div class="prospect-grid">
+          <div class="prospect-row" onclick="openDrawer('PSE')">
+            <div class="p-logo">PSE</div>
+            <div><div class="p-name">Puget Sound Energy</div><div class="p-meta">Utility · Seattle WA · 🕐 6yr mandate</div></div>
+            <div class="score-badge s-hot">ICP 94</div>
+            <div class="score-badge b-green" style="font-size:9px">MISSION 96</div>
+            <div class="stage-tag">Discovery</div>
+            <button class="btn primary" onclick="event.stopPropagation();navOutreach('PSE')">Draft email</button>
+          </div>
+          <div class="prospect-row" onclick="openDrawer('CBRE')">
+            <div class="p-logo">CB</div>
+            <div><div class="p-name">CBRE</div><div class="p-meta">Real Estate · Dallas TX · Scope 2 target 2030</div></div>
+            <div class="score-badge s-hot">ICP 89</div>
+            <div class="score-badge b-green" style="font-size:9px">MISSION 81</div>
+            <div class="stage-tag">Qualified</div>
+            <button class="btn primary" onclick="event.stopPropagation();navOutreach('CBRE')">Draft email</button>
+          </div>
+          <div class="prospect-row" onclick="openDrawer('LevelTen')">
+            <div class="p-logo">LT</div>
+            <div><div class="p-name">LevelTen Energy</div><div class="p-meta">Clean Energy · Seattle WA · Bloomberg featured</div></div>
+            <div class="score-badge s-warm">ICP 74</div>
+            <div class="score-badge b-teal" style="font-size:9px">MISSION 98</div>
+            <div class="stage-tag">Proposal sent</div>
+            <button class="btn" onclick="event.stopPropagation();navOutreach('LevelTen')">Follow-up</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROSPECTS -->
+    <div id="panel-prospects" class="panel">
+      <div class="page-header">
+        <div class="page-title">Prospect Intelligence</div>
+        <div class="page-sub">AI-scored · climate-weighted · mandate-tracked</div>
+      </div>
+      <div class="toolbar">
+        <input class="search-box" placeholder="Search accounts…" oninput="filterP(this.value)">
+        <div class="filter-chip on" onclick="chipFilter(this,'all')">All</div>
+        <div class="filter-chip" onclick="chipFilter(this,'hot')">🔥 Hot</div>
+        <div class="filter-chip" onclick="chipFilter(this,'mandate')">⏰ Mandate</div>
+        <div class="filter-chip" onclick="chipFilter(this,'utility')">Utility</div>
+        <div class="filter-chip" onclick="chipFilter(this,'energy')">Energy</div>
+      </div>
+      <div class="prospect-grid" id="p-list"></div>
+    </div>
+
+    <!-- OUTREACH -->
+    <div id="panel-outreach" class="panel">
+      <div class="page-header">
+        <div class="page-title">Outreach AI</div>
+        <div class="page-sub">Climate-aware personalization · powered by Claude</div>
+      </div>
+      <div class="outreach-layout">
+        <div class="plist-sidebar">
+          <div class="plist-header">SELECT PROSPECT</div>
+          <div id="plist-items"></div>
+        </div>
+        <div class="compose-area">
+          <div class="compose-header">
+            <span class="compose-title" id="compose-title">Select a prospect to compose</span>
+            <div style="display:flex;gap:6px">
+              <button class="btn" id="copy-btn" onclick="copyEmail()" style="display:none">Copy</button>
+            </div>
+          </div>
+          <div id="why-context-box" class="why-context" style="display:none">
+            <div class="why-label">🌍 Why this matters</div>
+            <div class="why-text" id="why-text">—</div>
+          </div>
+          <div class="compose-ctx" id="compose-ctx" style="display:none">
+            <div class="ctx-item"><div class="ctx-label">Company</div><div class="ctx-value" id="ctx-co">—</div></div>
+            <div class="ctx-item"><div class="ctx-label">Sector</div><div class="ctx-value" id="ctx-sector">—</div></div>
+            <div class="ctx-item"><div class="ctx-label">ICP Score</div><div class="ctx-value" id="ctx-icp">—</div></div>
+            <div class="ctx-item"><div class="ctx-label">Mission Score</div><div class="ctx-value" id="ctx-mission">—</div></div>
+            <div class="ctx-item"><div class="ctx-label">Mandate</div><div class="ctx-value" id="ctx-mandate">—</div></div>
+          </div>
+          <div class="tone-row" id="tone-row" style="display:none">
+            <span class="tone-label">Tone:</span>
+            <button class="tone-btn active" onclick="setTone(this,'direct')">Direct</button>
+            <button class="tone-btn" onclick="setTone(this,'warm')">Warm</button>
+            <button class="tone-btn" onclick="setTone(this,'mission')">Mission-first</button>
+            <button class="tone-btn" onclick="setTone(this,'challenger')">Challenger</button>
+            <button class="tone-btn" onclick="setTone(this,'concise')">Ultra-concise</button>
+          </div>
+          <div class="email-output" id="email-output">
+            <div class="empty-email"><div class="empty-icon">◇</div><div class="empty-txt">Select a prospect and generate</div></div>
+          </div>
+          <div class="compose-footer" id="compose-footer" style="display:none">
+            <button class="btn primary" id="gen-btn" onclick="generateEmail()">✦ Generate with AI</button>
+            <button class="btn" id="regen-btn" onclick="generateEmail()" style="display:none">↻ Regenerate</button>
+            <span class="char-count" id="char-count"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIMATE SIGNALS -->
+    <div id="panel-signals" class="panel">
+      <div class="page-header">
+        <div class="page-title">Climate Signal Feed</div>
+        <div class="page-sub">Mandate clocks · IRA funding · emissions reports · policy · news</div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-header"><span class="card-title">⏰ Mandate deadlines</span></div>
+          <div>
+            <div class="feed-item">
+              <div class="feed-icon fi-amber">⏰</div>
+              <div>
+                <div class="fi-title">Puget Sound Energy — WA Clean Energy Act</div>
+                <div class="fi-body">100% clean electricity required by 2030. Currently at 61% renewable. Significant AI-driven grid optimization needed to close the gap.</div>
+                <div class="fi-meta">6 years remaining · <span class="fi-amber-text">HIGH URGENCY</span> · $800M+ capex planned</div>
+              </div>
+            </div>
+            <div class="feed-item">
+              <div class="feed-icon fi-amber">⏰</div>
+              <div>
+                <div class="fi-title">Pacific Summit Energy — Oregon RPS</div>
+                <div class="fi-body">Oregon 100% clean by 2040. Company has committed to 2035. Behind on Scope 1 reduction by ~22%.</div>
+                <div class="fi-meta">11 years remaining · MEDIUM URGENCY</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">💰 IRA & policy funding</span></div>
+          <div>
+            <div class="feed-item">
+              <div class="feed-icon fi-green">💰</div>
+              <div>
+                <div class="fi-title">DOE Grid Modernization — $4.2B grants open</div>
+                <div class="fi-body">Infrastructure Investment and Jobs Act funding for AI-powered grid optimization. Utilities can apply. AZX clients eligible. Strong outreach hook.</div>
+                <div class="fi-meta">4h ago · <span class="fi-green-text">affects 3 prospects</span> · deadline Sep 2026</div>
+              </div>
+            </div>
+            <div class="feed-item">
+              <div class="feed-icon fi-green">💰</div>
+              <div>
+                <div class="fi-title">IRA Section 48E — clean energy tax credit expansion</div>
+                <div class="fi-body">New IRS guidance clarifies tech credits for AI-driven energy efficiency. Creates financial incentive for prospects to move faster.</div>
+                <div class="fi-meta">2d ago · <span class="fi-green-text">use in proposals</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">📉 Emissions misses</span></div>
+          <div>
+            <div class="feed-item">
+              <div class="feed-icon fi-teal">📉</div>
+              <div>
+                <div class="fi-title">Flexe — Q1 Scope 2 above target by 14%</div>
+                <div class="fi-body">Published sustainability report shows logistics emissions 14% above internal target. Board under pressure from ESG investors. Prime outreach window.</div>
+                <div class="fi-meta">1d ago · <span class="fi-amber-text">board pressure signal</span></div>
+              </div>
+            </div>
+            <div class="feed-item">
+              <div class="feed-icon fi-teal">📉</div>
+              <div>
+                <div class="fi-title">CBRE — 2030 net-zero commitment at risk</div>
+                <div class="fi-body">Real estate ops emissions flat YoY despite 2030 target. 6 years to 40% reduction needed. AI-driven building optimization is the lever.</div>
+                <div class="fi-meta">3d ago · <span class="fi-amber-text">urgency rising</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">📰 Climate news hooks</span></div>
+          <div>
+            <div class="feed-item">
+              <div class="feed-icon fi-gray">📰</div>
+              <div>
+                <div class="fi-title">LevelTen Energy — Bloomberg Green feature</div>
+                <div class="fi-body">Covered for renewable PPA marketplace growth. Warm intro window — reference in next outreach to show you follow their story.</div>
+                <div class="fi-meta">2d ago · <span class="fi-green-text">use in outreach</span></div>
+              </div>
+            </div>
+            <div class="feed-item">
+              <div class="feed-icon fi-gray">📰</div>
+              <div>
+                <div class="fi-title">Canary Media: 4× decarbonization software articles this week</div>
+                <div class="fi-body">Rising editorial coverage of AI in clean energy. Thought leadership window for AZX. Repurpose for LinkedIn, newsletter, and prospect emails.</div>
+                <div class="fi-meta">3d ago · CONTENT PLAY</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUSTAINABILITY REPORT ANALYZER -->
+    <div id="panel-analyzer" class="panel">
+      <div class="page-header">
+        <div class="page-title">Sustainability Report Analyzer</div>
+        <div class="page-sub">Paste any ESG or sustainability report → AI extracts gaps, hooks, and outreach angles</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;height:calc(100vh - 200px)">
+        <div class="textarea-card">
+          <div class="ta-header">
+            <span>Paste report text</span>
+            <span style="font-family:'Geist Mono',monospace;font-size:9px;color:var(--text3)">Any ESG / sustainability / annual report</span>
+          </div>
+          <textarea class="report-input" id="report-input" placeholder="Paste the prospect's sustainability report text here...
+
+Examples of what to paste:
+• ESG report executive summary
+• Annual report sustainability section  
+• Press release about emissions targets
+• CDP disclosure text
+
+AI will extract: gaps vs commitments, pain points, outreach hooks, mandate exposure, and a recommended AZX angle."></textarea>
+          <div class="ta-footer">
+            <input class="search-box" style="flex:1;min-width:0" placeholder="Company name (optional)" id="analyzer-co">
+            <button class="btn primary" id="analyze-btn" onclick="analyzeReport()">✦ Analyze report</button>
+          </div>
+        </div>
+        <div class="analysis-output">
+          <div class="ao-header">Analysis output</div>
+          <div class="ao-body" id="ao-body">
+            <div class="empty-email" style="height:300px"><div class="empty-icon">◑</div><div class="empty-txt">Paste a report and click analyze</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FUNNEL -->
+    <div id="panel-funnel" class="panel">
+      <div class="page-header">
+        <div class="page-title">Funnel Conversion</div>
+        <div class="page-sub">Awareness → close · climate-weighted conversion rates</div>
+      </div>
+      <div class="g2" style="margin-bottom:0">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Conversion funnel</span></div>
+          <div class="funnel-wrap" id="funnel-wrap"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Mission score distribution</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px" id="mission-dist"></div>
+        </div>
+      </div>
+      <div class="g3" style="margin-top:14px">
+        <div class="metric-card"><div class="metric-label">avg deal velocity</div><div class="metric-value">47 <span style="font-size:16px;color:var(--text3)">days</span></div><div class="metric-delta up">↓ 8d vs Q1</div></div>
+        <div class="metric-card"><div class="metric-label">mission-aligned close rate</div><div class="metric-value green">68<span style="font-size:16px">%</span></div><div class="metric-delta" style="color:var(--text3)">vs 41% non-aligned</div></div>
+        <div class="metric-card"><div class="metric-label">avg CO₂e per closed deal</div><div class="metric-value">340K <span style="font-size:14px;color:var(--text3)">t</span></div><div class="metric-delta" style="color:var(--teal)">tonnes avoided</div></div>
+      </div>
+    </div>
+
+    <!-- CAMPAIGNS -->
+    <div id="panel-campaigns" class="panel">
+      <div class="page-header">
+        <div class="page-title">Campaign Performance</div>
+        <div class="page-sub">AI-written vs human · climate angle vs standard · reply rates</div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Active campaigns</span></div>
+          <div id="campaign-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">AI vs human performance</span></div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px"><span>AI-written · climate angle</span><span style="color:var(--green)">34% reply</span></div>
+              <div class="bar-bg"><div class="bar-fill" data-w="68" style="width:0;background:var(--green)"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px"><span>AI-written · standard</span><span style="color:var(--text2)">21% reply</span></div>
+              <div class="bar-bg"><div class="bar-fill" data-w="42" style="width:0;background:var(--blue)"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px"><span>Human-written</span><span style="color:var(--text2)">18% reply</span></div>
+              <div class="bar-bg"><div class="bar-fill" data-w="36" style="width:0;background:var(--text3)"></div></div>
+            </div>
+          </div>
+          <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
+            <div style="font-size:10px;color:var(--text3);font-family:'Geist Mono',monospace;margin-bottom:6px;letter-spacing:0.05em">KEY INSIGHT</div>
+            <div style="font-size:11px;color:var(--text2);line-height:1.6">Emails that lead with the prospect's <span style="color:var(--green)">specific climate mandate or emissions gap</span> outperform generic AI emails by 62%. Mission-first tone drives the highest reply rate at 34%.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<!-- PROSPECT DRAWER -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer(event)">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+    <div class="d-name" id="d-name">—</div>
+    <div class="d-sector" id="d-sector">—</div>
+
+    <div class="score-trio">
+      <div class="score-box"><div class="score-num" style="color:var(--green)" id="d-icp">—</div><div class="score-lbl">ICP Score</div></div>
+      <div class="score-box"><div class="score-num" style="color:var(--teal)" id="d-mission">—</div><div class="score-lbl">Mission Score</div></div>
+      <div class="score-box"><div class="score-num" style="color:var(--amber)" id="d-urgency">—</div><div class="score-lbl">Urgency Index</div></div>
+    </div>
+
+    <div id="d-mandate-block"></div>
+    <div id="d-impact-block"></div>
+    <div id="d-why-block"></div>
+
+    <div class="d-section">
+      <div class="d-section-title">Why now</div>
+      <div class="d-body" id="d-why"></div>
+    </div>
+    <div class="d-section">
+      <div class="d-section-title">Key signals</div>
+      <div id="d-signals"></div>
+    </div>
+    <div class="d-section">
+      <div class="d-section-title">Recommended play</div>
+      <div class="d-body" id="d-play"></div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn primary" id="d-draft-btn">✦ Draft outreach</button>
+      <button class="btn" onclick="closeDrawer()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PROSPECTS = [
+  { id:'PSE', logo:'PSE', name:'Puget Sound Energy', sector:'Utility', loc:'Seattle, WA', icp:94, mission:96, urgency:91, heat:'hot', stage:'Discovery', signal:'WA Clean Energy mandate · 6yr', industry:'utility',
+    mandate:{years:6,law:'WA Clean Energy Transformation Act',target:'100% clean by 2030',gap:'39% remaining'},
+    co2:'~1.8M tonnes CO₂e avoided if grid fully optimized',
+    whyMatters:'Serves 1.1M customers across Washington state. Committed to 100% clean electricity by 2030 under state law — non-negotiable. Every year of delay = more stranded fossil assets.',
+    why:'New VP of Digital Transformation hired from Google Cloud. WA mandate creates non-optional urgency. DOE grid modernization grants just opened — $800M+ eligible.',
+    signals:['exec move','mandate deadline','IRA grant eligible','board pressure'],
+    play:'Lead with the mandate deadline and DOE grant angle. Offer a rapid assessment of their grid AI readiness. Reference Flexe and LevelTen as proof of AZX speed-to-value.'
+  },
+  { id:'CBRE', logo:'CB', name:'CBRE', sector:'Real Estate', loc:'Dallas, TX', icp:89, mission:81, urgency:74, heat:'hot', stage:'Qualified', signal:'Scope 2 flat · 2030 target at risk', industry:'real estate',
+    mandate:{years:6,law:'Internal net-zero commitment',target:'Net zero by 2030',gap:'Scope 2 flat YoY'},
+    co2:'~420K tonnes CO₂e if building portfolio optimized',
+    whyMatters:'Manages 500M+ sq ft of commercial real estate globally. 2030 net-zero commitment is public and investor-facing. Scope 2 emissions flat — they need AI-driven building optimization now.',
+    why:'Posting 3 internal AI roles = build attempt. Scope 2 YoY flat = board pressure mounting. 2030 commitment is public — risk of reputational damage if missed.',
+    signals:['job signal','emissions miss','buy vs build moment','investor pressure'],
+    play:'Position AZX as already-built vs their trying-to-build. Request a working session with their sustainability + data teams. Lead with the Scope 2 gap — they know the number.'
+  },
+  { id:'LevelTen', logo:'LT', name:'LevelTen Energy', sector:'Clean Energy', loc:'Seattle, WA', icp:74, mission:98, urgency:62, heat:'warm', stage:'Proposal sent', signal:'Bloomberg feature · Head of AI Strategy hiring', industry:'energy',
+    mandate:null,
+    co2:'~600K tonnes CO₂e unlocked via better PPA matching',
+    whyMatters:'Operates the largest renewable energy marketplace in North America. Their platform directly enables corporate buyers to source clean energy — AZX can make that matching smarter and faster.',
+    why:'Bloomberg Green coverage creates warm outreach hook. Hiring a Head of AI Strategy = budget arriving. Proposal already sent — need to resurface before new hire arrives with existing vendor relationships.',
+    signals:['news hook','leadership hiring','proposal pending'],
+    play:"Reference the Bloomberg piece genuinely. Nudge the proposal with a specific question: 'Before your AI Strategy hire arrives, want to align on the scope so they inherit a running start?'"
+  },
+  { id:'Flexe', logo:'FX', name:'Flexe', sector:'Logistics', loc:'Seattle, WA', icp:61, mission:72, urgency:68, heat:'warm', stage:'Discovery', signal:'Scope 2 14% above target · CDO exit', industry:'logistics',
+    mandate:{years:8,law:'Internal ESG commitment',target:'Scope 2 neutral by 2032',gap:'14% above Q1 target'},
+    co2:'~180K tonnes CO₂e via route + facility optimization',
+    whyMatters:"Logistics is one of the most carbon-intensive industries. Flexe's on-demand warehousing model has an outsized opportunity to reduce freight emissions through AI-optimized routing and facility use.",
+    why:'Q1 Scope 2 14% above target = board pressure. CDO exit = leadership transition = opportunity to get in before permanent hire locks in existing vendors.',
+    signals:['emissions miss','leadership transition','budget flux'],
+    play:'Reach out to CFO or COO directly. Lead with the Q1 emissions gap — they published it, they know it hurts. Position AZX as a fast, low-risk bridge through the CDO transition.'
+  },
+  { id:'GridCo', logo:'GC', name:'Western Grid Co.', sector:'Energy', loc:'Phoenix, AZ', icp:91, mission:88, urgency:95, heat:'hot', stage:'Not contacted', signal:'Active RFP · $2M · 30d deadline', industry:'energy',
+    mandate:{years:4,law:'AZ Clean Energy Standard',target:'100% clean by 2050',gap:'Accelerated internal target 2030'},
+    co2:'~2.1M tonnes CO₂e via AI grid optimization',
+    whyMatters:'Serves rapidly growing Phoenix metro — one of the hottest and most energy-stressed regions in the US. Grid AI is not optional as summer peaks intensify with climate change.',
+    why:'Active RFP with 30-day deadline. 91% AZX fit. AZ climate urgency rising fast — Phoenix heat records broken annually. Time-sensitive.',
+    signals:['active rfp','mandate','climate risk','30d deadline'],
+    play:'Immediate RFP response. Lead with AZX utility experience (PSE reference). Quantify the CO₂e impact estimate. Close with a discovery call before the deadline.'
+  },
+  { id:'PSEnergy', logo:'PS', name:'Pacific Summit Energy', sector:'Utility', loc:'Portland, OR', icp:55, mission:79, urgency:58, heat:'cool', stage:'Not contacted', signal:'OR RPS 2040 · Scope 1 behind', industry:'utility',
+    mandate:{years:14,law:'Oregon RPS',target:'100% clean by 2040',gap:'Scope 1 reduction 22% behind'},
+    co2:'~900K tonnes CO₂e via generation + grid optimization',
+    whyMatters:'Oregon utility with strong renewable mandate but lagging on Scope 1. Pacific Northwest grid is increasingly stressed by drought-impacted hydro — AI optimization is critical infrastructure.',
+    why:'Longer timeline but Scope 1 gap is real. PSE reference gives warm intro angle. Early positioning before competitor attention arrives.',
+    signals:['mandate','scope 1 gap','early stage'],
+    play:'Cold outreach with PSE as reference. Early positioning play — not urgent today, but worth getting on their radar before RFP season.'
+  },
+];
+
+let selProspect = null;
+let selTone = 'direct';
+let generating = false;
+let curFilter = 'all';
+
+// API KEY MANAGEMENT
+function getApiKey() { return sessionStorage.getItem('pulse_api_key') || ''; }
+function saveKey() {
+  const k = document.getElementById('api-key-input').value.trim();
+  if (!k) return;
+  sessionStorage.setItem('pulse_api_key', k);
+  document.getElementById('api-banner').style.display = 'none';
+  document.getElementById('api-ok').style.display = 'flex';
+}
+function clearKey() {
+  sessionStorage.removeItem('pulse_api_key');
+  document.getElementById('api-key-input').value = '';
+  document.getElementById('api-ok').style.display = 'none';
+  document.getElementById('api-banner').style.display = 'flex';
+}
+function checkApiEnv() {
+  const isExternal = !window.location.hostname.includes('claude.ai') && window.location.hostname !== '';
+  if (isExternal) {
+    const hasKey = !!getApiKey();
+    document.getElementById('api-banner').style.display = hasKey ? 'none' : 'flex';
+    document.getElementById('api-ok').style.display = hasKey ? 'flex' : 'none';
+  }
+}
+function apiHeaders() {
+  const key = getApiKey();
+  const h = {'Content-Type':'application/json'};
+  if (key) { h['x-api-key'] = key; h['anthropic-version'] = '2023-06-01'; }
+  return h;
+}
+
+// TICKER
+const TICKERS = [
+  'WA Clean Energy Act: 6 years until Puget Sound Energy must hit 100% clean',
+  'DOE: $4.2B grid modernization grants open — AZX clients eligible',
+  'Flexe Q1 Scope 2 emissions 14% above target — board pressure mounting',
+  'IRA Section 48E clarified: AI-driven energy efficiency now credit-eligible',
+  'Phoenix: 3rd consecutive summer of record heat — grid AI is critical infrastructure',
+  'Oregon RPS: utilities must hit 100% clean by 2040 — 14 years and counting',
+  'CBRE net-zero 2030 commitment: Scope 2 flat YoY — 6 years to close the gap',
+];
+let tickerIdx = 0;
+function rotateTicker() {
+  document.getElementById('ticker-text').textContent = TICKERS[tickerIdx % TICKERS.length];
+  tickerIdx++;
+}
+rotateTicker();
+setInterval(rotateTicker, 6000);
+
+// NAV
+function nav(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  const titles = {dashboard:'Dashboard',prospects:'Prospect Intelligence',outreach:'Outreach AI',signals:'Climate Signal Feed',analyzer:'Sustainability Report Analyzer',funnel:'Funnel',campaigns:'Campaigns'};
+  document.getElementById('topbar-title').textContent = titles[id] || id;
+  if (id === 'dashboard') setTimeout(animBars, 150);
+  if (id === 'prospects') renderProspects();
+  if (id === 'outreach') renderPList();
+  if (id === 'funnel') setTimeout(renderFunnel, 150);
+  if (id === 'campaigns') { renderCampaigns(); setTimeout(animBars, 150); }
+}
+
+function navOutreach(pid) {
+  nav('outreach', document.querySelectorAll('.nav-item')[2]);
+  renderPList();
+  setTimeout(() => selectProspect(PROSPECTS.find(p => p.id === pid)), 100);
+}
+
+function animBars() {
+  document.querySelectorAll('.bar-fill').forEach(b => b.style.width = (b.dataset.w || 0) + '%');
+}
+
+// PROSPECTS
+function renderProspects(filter) {
+  const f = filter || curFilter;
+  let list = PROSPECTS;
+  if (f === 'hot') list = PROSPECTS.filter(p => p.heat === 'hot');
+  else if (f === 'mandate') list = PROSPECTS.filter(p => p.mandate && p.mandate.years <= 10);
+  else if (f === 'utility' || f === 'energy') list = PROSPECTS.filter(p => p.industry === f);
+  document.getElementById('p-list').innerHTML = list.map(p => `
+    <div class="prospect-row" onclick="openDrawer('${p.id}')">
+      <div class="p-logo">${p.logo}</div>
+      <div>
+        <div class="p-name">${p.name}</div>
+        <div class="p-meta">${p.sector} · ${p.loc}${p.mandate ? ' · ⏰ ' + p.mandate.years + 'yr mandate' : ''}</div>
+      </div>
+      <div class="score-badge ${p.heat === 'hot' ? 's-hot' : p.heat === 'warm' ? 's-warm' : 's-cool'}">ICP ${p.icp}</div>
+      <div class="badge ${p.mission >= 90 ? 'b-teal' : p.mission >= 75 ? 'b-green' : 'b-gray'}">MISSION ${p.mission}</div>
+      <div class="stage-tag">${p.stage}</div>
+      <button class="btn primary" onclick="event.stopPropagation();navOutreach('${p.id}')">Draft email</button>
+    </div>
+  `).join('');
+}
+
+function filterP(q) {
+  const low = q.toLowerCase();
+  const list = PROSPECTS.filter(p => p.name.toLowerCase().includes(low) || p.sector.toLowerCase().includes(low) || p.loc.toLowerCase().includes(low));
+  document.getElementById('p-list').innerHTML = list.map(p => `
+    <div class="prospect-row" onclick="openDrawer('${p.id}')">
+      <div class="p-logo">${p.logo}</div>
+      <div><div class="p-name">${p.name}</div><div class="p-meta">${p.sector} · ${p.loc}</div></div>
+      <div class="score-badge ${p.heat==='hot'?'s-hot':p.heat==='warm'?'s-warm':'s-cool'}">ICP ${p.icp}</div>
+      <div class="badge ${p.mission>=90?'b-teal':p.mission>=75?'b-green':'b-gray'}">MISSION ${p.mission}</div>
+      <div class="stage-tag">${p.stage}</div>
+      <button class="btn primary" onclick="event.stopPropagation();navOutreach('${p.id}')">Draft email</button>
+    </div>
+  `).join('');
+}
+
+function chipFilter(el, f) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  curFilter = f;
+  renderProspects(f);
+}
+
+// OUTREACH
+function renderPList() {
+  document.getElementById('plist-items').innerHTML = PROSPECTS.map(p => `
+    <div class="plist-item ${selProspect && selProspect.id === p.id ? 'selected' : ''}" onclick="selectProspect(PROSPECTS.find(x=>x.id==='${p.id}'))">
+      <div class="plist-name">${p.name}</div>
+      <div class="plist-meta">${p.sector} · ${p.loc}</div>
+      <div class="plist-scores"><span class="badge ${p.heat==='hot'?'b-green':p.heat==='warm'?'b-amber':'b-blue'}">ICP ${p.icp}</span><span class="badge b-teal">M ${p.mission}</span></div>
+    </div>
+  `).join('');
+}
+
+function selectProspect(p) {
+  selProspect = p;
+  renderPList();
+  document.getElementById('compose-title').textContent = 'Email to ' + p.name;
+  document.getElementById('why-context-box').style.display = 'block';
+  document.getElementById('why-text').textContent = p.whyMatters;
+  document.getElementById('compose-ctx').style.display = 'flex';
+  document.getElementById('tone-row').style.display = 'flex';
+  document.getElementById('compose-footer').style.display = 'flex';
+  document.getElementById('ctx-co').textContent = p.name;
+  document.getElementById('ctx-sector').textContent = p.sector;
+  document.getElementById('ctx-icp').textContent = p.icp + ' / 100';
+  document.getElementById('ctx-mission').textContent = p.mission + ' / 100';
+  document.getElementById('ctx-mandate').textContent = p.mandate ? p.mandate.years + 'yr · ' + p.mandate.target : 'Voluntary only';
+  document.getElementById('email-output').innerHTML = '<div class="empty-email"><div class="empty-icon">◇</div><div class="empty-txt">Click "Generate with AI" to draft</div></div>';
+  document.getElementById('copy-btn').style.display = 'none';
+  document.getElementById('regen-btn').style.display = 'none';
+  document.getElementById('gen-btn').style.display = '';
+  document.getElementById('char-count').textContent = '';
+}
+
+function setTone(el, t) {
+  document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  selTone = t;
+}
+
+async function generateEmail() {
+  if (!selProspect || generating) return;
+  generating = true;
+  const p = selProspect;
+  const btn = document.getElementById('gen-btn');
+  const out = document.getElementById('email-output');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Generating…';
+  out.innerHTML = '';
+  out.classList.add('typing');
+
+  const toneDesc = {
+    direct:'direct and confident, no fluff, lead with the specific signal',
+    warm:'warm and genuine, relationship-first, reference their climate story',
+    mission:'lead with the climate mission and impact — why this matters for the planet, then connect to AZX',
+    challenger:'challenger-sale — surface a risk or gap they may not have fully confronted yet',
+    concise:'ultra-concise, 5 sentences max, every word earns its place'
+  }[selTone];
+
+  const prompt = `You are Diya Kithani, AI Product Manager and Data Engineer, who just joined AZX as their GTM AI Stack person. AZX is a public benefit corporation that accelerates AI transformation in critical industries — utilities, clean energy, real estate, logistics. Clients: CBRE, LevelTen Energy, Flexe, Puget Sound Energy.
+
+Write a personalized cold outreach email to ${p.name} (${p.sector}, ${p.loc}).
+
+Prospect context:
+- ICP Score: ${p.icp}/100
+- Mission/Climate alignment: ${p.mission}/100
+- Urgency index: ${p.urgency}/100  
+- Stage: ${p.stage}
+- Key trigger: ${p.signal}
+- Why now: ${p.why}
+- Climate context: ${p.whyMatters}
+- Mandate: ${p.mandate ? p.mandate.years + ' years until ' + p.mandate.target + '. Gap: ' + p.mandate.gap : 'Voluntary commitments only'}
+- Estimated CO₂e impact: ${p.co2}
+- Recommended play: ${p.play}
+
+Tone: ${toneDesc}
+
+Write ONLY the email. Format:
+Subject: [subject line]
+
+[email body]
+
+Diya Kithani
+GTM AI Stack @ AZX
+
+Rules: Under 180 words. Reference the specific trigger naturally. If tone is mission-first, connect the climate impact to the business conversation — don't be preachy, be real. Make it feel like a human wrote it who genuinely cares about decarbonization, not a sales robot.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:apiHeaders(),
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:500,
+        stream:true,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let full = '';
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      const chunk = dec.decode(value);
+      for (const line of chunk.split('\n').filter(l => l.startsWith('data:'))) {
+        const d = line.replace('data:','').trim();
+        if (d === '[DONE]') continue;
+        try {
+          const j = JSON.parse(d);
+          if (j.type === 'content_block_delta' && j.delta?.text) {
+            full += j.delta.text;
+            out.textContent = full;
+          }
+        } catch {}
+      }
+    }
+    out.classList.remove('typing');
+    document.getElementById('copy-btn').style.display = '';
+    document.getElementById('regen-btn').style.display = '';
+    document.getElementById('gen-btn').style.display = 'none';
+    document.getElementById('char-count').textContent = full.length + ' chars';
+  } catch(e) {
+    out.classList.remove('typing');
+    out.textContent = '[API error — in production this streams live from Claude]\n\nSample:\n\nSubject: 6 years to 100% clean — what\'s your grid AI plan?\n\nHi [Name],\n\nWashington\'s Clean Energy Transformation Act doesn\'t move. 2030 is fixed, and Puget Sound Energy is at 61% renewable today.\n\nI\'m joining AZX — we\'ve been building AI transformation infrastructure for utilities and energy companies. We helped LevelTen go from manual PPA matching to AI-optimized in 90 days.\n\nWith the DOE grid modernization grants just opening, there\'s also a funding angle worth discussing.\n\nWorth 20 minutes to compare notes on your grid AI roadmap?\n\nDiya Kithani\nGTM AI Stack @ AZX';
+    document.getElementById('regen-btn').style.display = '';
+    document.getElementById('gen-btn').style.display = 'none';
+  }
+  generating = false;
+  btn.disabled = false;
+  btn.innerHTML = '✦ Generate with AI';
+}
+
+function copyEmail() {
+  navigator.clipboard.writeText(document.getElementById('email-output').textContent).then(() => {
+    const b = document.getElementById('copy-btn');
+    b.textContent = 'Copied!';
+    setTimeout(() => b.textContent = 'Copy', 2000);
+  });
+}
+
+// SUSTAINABILITY ANALYZER
+async function analyzeReport() {
+  const text = document.getElementById('report-input').value.trim();
+  const co = document.getElementById('analyzer-co').value.trim() || 'the company';
+  if (!text) return;
+  const btn = document.getElementById('analyze-btn');
+  const body = document.getElementById('ao-body');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Analyzing…';
+  body.innerHTML = '<div class="empty-email" style="height:200px"><div class="spinner" style="width:20px;height:20px"></div><div class="empty-txt" style="margin-top:8px">Reading sustainability report…</div></div>';
+
+  const prompt = `You are a climate-focused GTM analyst at AZX, an AI transformation company for critical industries (utilities, clean energy, real estate, logistics).
+
+Analyze this sustainability / ESG report excerpt from ${co} and extract:
+
+1. COMMITMENTS MADE — what targets have they publicly set?
+2. GAPS & MISSES — where are they behind vs their own targets?
+3. PAIN POINTS — what operational challenges does this reveal?
+4. OUTREACH HOOKS — 3 specific, genuine conversation starters based on this report
+5. MANDATE EXPOSURE — any regulatory/legal deadlines mentioned?
+6. AZX ANGLE — how could AZX's AI transformation work specifically help address what you found?
+
+Report text:
+${text.slice(0, 3000)}
+
+Format your response clearly with these 6 section headers. Be specific, not generic. Reference actual numbers and quotes from the text where possible.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:apiHeaders(),
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:800,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data = await res.json();
+    const txt = data.content.map(b => b.text || '').join('');
+
+    const sections = txt.split(/\n(?=\d\.|[A-Z &]+—)/);
+    body.innerHTML = sections.map(s => {
+      const lines = s.trim().split('\n');
+      const title = lines[0];
+      const content = lines.slice(1).join('\n').trim();
+      return `<div class="insight-block"><div class="ib-label">${title}</div><div class="ib-content">${content}</div></div>`;
+    }).join('<div style="height:1px;background:var(--border);margin:10px 0"></div>');
+  } catch(e) {
+    body.innerHTML = '<div class="insight-block"><div class="ib-label">Error</div><div class="ib-content">Could not reach API. In production this calls Claude to analyze the report in real time.\n\nSample output for a utility ESG report:\n\n1. COMMITMENTS: Net zero Scope 1+2 by 2040. 50% renewable by 2027.\n2. GAPS: Currently 31% renewable vs 50% target. Scope 2 flat YoY.\n3. PAIN POINTS: Legacy grid infrastructure + manual dispatch = inefficient renewable integration.\n4. HOOKS: "I saw you committed to 50% renewable by 2027 — you\'re at 31% today. What\'s the plan for the remaining 6 years?"\n5. MANDATE: State RPS requires 80% clean by 2035.\n6. AZX ANGLE: AI-driven dispatch optimization + demand forecasting = fastest path to close the renewable gap without new capex.</div></div>';
+  }
+  btn.disabled = false;
+  btn.innerHTML = '✦ Analyze report';
+}
+
+// DRAWER
+function openDrawer(id) {
+  const p = PROSPECTS.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('d-name').textContent = p.name;
+  document.getElementById('d-sector').textContent = p.sector.toUpperCase() + ' · ' + p.loc;
+  document.getElementById('d-icp').textContent = p.icp;
+  document.getElementById('d-mission').textContent = p.mission;
+  document.getElementById('d-urgency').textContent = p.urgency;
+  document.getElementById('d-mandate-block').innerHTML = p.mandate ? `
+    <div class="mandate-clock">
+      <div class="mandate-years">${p.mandate.years}<span style="font-size:14px;color:var(--amber)">yr</span></div>
+      <div><div class="mandate-label" style="font-size:12px;font-weight:500;color:var(--text)">${p.mandate.law}</div><div class="mandate-sub">${p.mandate.target} · Gap: ${p.mandate.gap}</div></div>
+    </div>` : '';
+  document.getElementById('d-impact-block').innerHTML = `
+    <div class="impact-estimate">
+      <div class="impact-est-val">${p.co2.split(' ')[0]} <span style="font-size:12px;color:var(--text2)">${p.co2.split(' ').slice(1).join(' ')}</span></div>
+      <div class="impact-est-lbl">estimated climate impact if AZX transforms this account</div>
+    </div>`;
+  document.getElementById('d-why-block').innerHTML = `
+    <div class="why-matters">
+      <div class="wm-label">🌍 Why this matters</div>
+      <div class="wm-text">${p.whyMatters}</div>
+    </div>`;
+  document.getElementById('d-why').textContent = p.why;
+  document.getElementById('d-signals').innerHTML = p.signals.map(s => `<span class="badge b-green">${s}</span>`).join('');
+  document.getElementById('d-play').textContent = p.play;
+  document.getElementById('d-draft-btn').onclick = () => { closeDrawer(); navOutreach(p.id); };
+  document.getElementById('drawer-overlay').classList.add('open');
+}
+
+function closeDrawer(e) {
+  if (!e || e.target === document.getElementById('drawer-overlay')) {
+    document.getElementById('drawer-overlay').classList.remove('open');
+  }
+}
+
+// FUNNEL
+function renderFunnel() {
+  const stages = [
+    {label:'Awareness',n:84,pct:100,color:'var(--green)'},
+    {label:'Signal detected',n:47,pct:56,color:'var(--green)'},
+    {label:'Qualified',n:18,pct:38,color:'var(--green)'},
+    {label:'Proposal sent',n:8,pct:44,color:'var(--amber)'},
+    {label:'Negotiating',n:3,pct:38,color:'var(--amber)'},
+    {label:'Closed won',n:2,pct:67,color:'var(--teal)'},
+  ];
+  document.getElementById('funnel-wrap').innerHTML = stages.map(s => `
+    <div class="funnel-stage">
+      <div class="funnel-label">${s.label}</div>
+      <div class="funnel-bar-bg">
+        <div class="funnel-bar-fill" data-w="${s.pct}" style="width:0;background:${s.color}">
+          <span class="funnel-val">${s.n}</span>
+        </div>
+      </div>
+      <div class="funnel-pct">${s.pct}%</div>
+    </div>
+  `).join('');
+  document.getElementById('mission-dist').innerHTML = [
+    {label:'Mission 90–100',n:3,color:'var(--teal)'},
+    {label:'Mission 75–89',n:5,color:'var(--green)'},
+    {label:'Mission 60–74',n:3,color:'var(--amber)'},
+    {label:'Mission <60',n:1,color:'var(--text3)'},
+  ].map(r => `
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text2);margin-bottom:3px"><span>${r.label}</span><span style="color:${r.color}">${r.n} accounts</span></div>
+      <div class="bar-bg"><div class="bar-fill" data-w="${r.n * 10}" style="width:0;background:${r.color}"></div></div>
+    </div>
+  `).join('');
+  setTimeout(animBars, 100);
+}
+
+// CAMPAIGNS
+function renderCampaigns() {
+  const campaigns = [
+    {name:'WA Utility Mandate Outreach',sent:12,replied:5,pct:42,ai:true,climate:true},
+    {name:'DOE Grant Alert Series',sent:8,replied:3,pct:38,ai:true,climate:true},
+    {name:'Scope 2 Miss Follow-up',sent:6,replied:2,pct:33,ai:true,climate:false},
+    {name:'Q2 General Prospecting',sent:24,replied:4,pct:17,ai:false,climate:false},
+    {name:'RFP Discovery Sequence',sent:5,replied:1,pct:20,ai:true,climate:false},
+  ];
+  document.getElementById('campaign-list').innerHTML = campaigns.map(c => `
+    <div class="campaign-row">
+      <div>
+        <div class="campaign-name">${c.name}</div>
+        <div style="display:flex;gap:4px;margin-top:3px">
+          ${c.ai ? '<span class="badge b-blue">AI</span>' : ''}
+          ${c.climate ? '<span class="badge b-green">Climate angle</span>' : ''}
+        </div>
+      </div>
+      <div class="campaign-stat">${c.sent} sent</div>
+      <div class="campaign-stat" style="color:var(--green)">${c.replied} replied</div>
+      <div class="campaign-bar-wrap">
+        <div style="font-size:9px;color:var(--text3);font-family:monospace;margin-bottom:2px;text-align:right">${c.pct}%</div>
+        <div class="campaign-bar-bg"><div class="campaign-bar-fill" style="width:${c.pct * 2}%"></div></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// INIT
+checkApiEnv();
+setTimeout(animBars, 300);
+renderProspects();
+renderPList();
+</script>
+</body>
+</html>
