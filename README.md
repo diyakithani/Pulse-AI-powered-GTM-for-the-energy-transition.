@@ -1,6 +1,6 @@
 # 🌿 Pulse — Climate GTM Intelligence
 
-**Built by Diya Kithani as a vibe-coded application for the AZX GTM AI Stack role.**
+**Built by Diya Kithani**
 
 Pulse is a climate-native GTM intelligence platform — the kind of tool AZX would actually use to find, understand, and convert prospects in energy, utilities, and real estate. It's not a portfolio piece pretending to be a product. It's a working prototype of what I'd build on day one.
 
